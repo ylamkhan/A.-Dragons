@@ -1,0 +1,118 @@
+
+/*Time: 30 ms, memory: 168 KB*/
+
+#include <iostream>
+#include <new>
+
+using namespace std;
+
+//declaration class pour stock data .
+class t_data 
+{
+    public:
+        int xi;
+        int yi;
+        int si;
+        t_data *next;
+};
+//creation d'un node pour la fonction new et remplire data;
+t_data *new_elemment(int x,int y)
+{
+    t_data *d = new t_data;
+    d->xi = x;
+    d->yi = y;
+    d->si = 0;
+    d->next = nullptr;
+    return d;
+}
+//ajout un elemment a la fin dans list .
+void add_back(t_data **list, t_data *new_elemment)
+{
+    t_data *tmp;
+    if(!*list)
+        *list = new_elemment;
+    else
+    {
+        tmp=*list;
+        while (tmp->next)
+            tmp=tmp->next;
+        tmp->next=new_elemment;
+    }
+}
+//change data deux nodes;
+void change(t_data **tmp1,t_data **tmp2)
+{
+    int x;
+    int y;
+    x=(*tmp1)->xi;
+    y=(*tmp1)->yi;
+    (*tmp1)->xi=(*tmp2)->xi;
+    (*tmp1)->yi=(*tmp2)->yi;
+    (*tmp2)->xi=x;
+    (*tmp2)->yi=y;
+
+}
+//sort list croissant;
+void sort_list(t_data **list)
+{
+    t_data *tmp1;
+    t_data *tmp2;
+    tmp1 = *list;
+
+    while (tmp1->next)
+    {
+        tmp2 = tmp1->next;
+        while (tmp2)
+        {
+            if(tmp1->xi > tmp2->xi)
+                change(&tmp1,&tmp2);
+            tmp2=tmp2->next;
+        }
+        tmp1=tmp1->next;
+    }
+}
+//free link list.
+void ft_free_list(t_data *list)
+{
+    t_data *tmp;
+    while (list)
+    {
+        tmp = list;
+        list=list->next;
+        free(tmp);
+    }
+    if(list)
+        free(list);
+}
+//donne lamain l'utilisature entre data;
+int main()
+{
+    t_data *list=NULL;
+    int s,n;
+    cin>>s>>n;
+    while (n--)
+    {
+        int x,y;
+        cin>>x>>y;
+        t_data *new1=new_elemment(x,y);
+        add_back(&list,new1);
+    }
+    sort_list(&list);
+    //traitement while sur link list et verife si si<xi . 
+    list->si=s;
+    while (list)
+    {
+        if(list->si<=list->xi)
+        {
+            cout<<"NO"<<endl;
+            ft_free_list(list);
+            return 0;
+        }
+        if(list->next)
+            list->next->si=list->yi+list->si;
+        list=list->next;
+    }
+    cout<<"YES"<<endl;
+    ft_free_list(list);
+    return 0;
+}
